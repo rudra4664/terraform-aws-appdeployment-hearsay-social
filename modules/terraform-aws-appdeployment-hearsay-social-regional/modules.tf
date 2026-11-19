@@ -179,7 +179,7 @@ module "outbound_access_sg_v2" {
   tags    = var.tags
 
   security_group = {
-    name        = "clientprosvs-outbound-access-sg"
+    name        = "clientprosvs-outbound-access-sg-green"
     description = "This has only Oubtbound Rule on all traffic"
     vpc_id      = data.aws_vpc.current.id
     ingress     = local.outbound_access_ingress
