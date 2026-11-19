@@ -5,14 +5,6 @@ locals {
   requested_security_groups = toset(flatten([for instance in values(var.green_instances) : instance.security_groups]))
 
   security_group_ids = {
-    cyberark_instance_access = module.cyberark_instance_access_sg.resources.aws_security_group.id
-    hearsay_instance_access  = module.hearsay_instance_access_sg.resources.aws_security_group.id
-    onprem_win_access        = one(module.onprem_win_access_sg[*].resources.aws_security_group.id)
-    outbound_access          = one(module.outbound_access_sg[*].resources.aws_security_group.id)
-    vpc_access               = module.vpc_access_sg.resources.aws_security_group.id
-  }
-
-  replacement_security_group_ids = {
     cyberark_instance_access = module.cyberark_instance_access_sg_v2.resources.aws_security_group.id
     hearsay_instance_access  = module.hearsay_instance_access_sg_v2.resources.aws_security_group.id
     onprem_win_access        = one(module.onprem_win_access_sg_v2[*].resources.aws_security_group.id)
