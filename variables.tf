@@ -92,7 +92,7 @@ variable "green_instances" {
           sdb = {
             device_name = "/dev/sdb"
             size        = 150
-            snapshot_id = null # (snapshot ID of the existing /dev/sdb volume)
+            snapshot_id = null
             type        = "gp3"
           }
         }

@@ -129,3 +129,99 @@ module "hearsay_instance_access_sg" {
     egress      = {}
   }
 }
+
+module "vpc_access_sg_v2" {
+  source  = "app.terraform.io/NYL-Prod/apps-resources/aws//modules/terraform-aws-security-group"
+  version = "1.2.0"
+  tf_org  = "NYL-PROD"
+  appid   = var.appid
+  tags    = var.tags
+
+  security_group = {
+    name        = "clientprosvs-vpc-access-sg"
+    description = "Allows access between resources within VPC CIDR"
+    vpc_id      = data.aws_vpc.current.id
+    ingress     = local.vpc_access_ingress
+
+    egress = {
+      all-outbound = {
+        description = "All outbound"
+        ip_protocol = "-1"
+        cidr_ipv4   = "0.0.0.0/0"
+      }
+    }
+  }
+}
+
+module "onprem_win_access_sg_v2" {
+  count   = contains(local.requested_security_groups, "onprem_win_access") ? 1 : 0
+  source  = "app.terraform.io/NYL-Prod/apps-resources/aws//modules/terraform-aws-security-group"
+  version = "1.2.0"
+  tf_org  = "NYL-PROD"
+  appid   = var.appid
+  tags    = var.tags
+
+  security_group = {
+    name        = "clientprosvs-onprem-win-access-sg"
+    description = "Allow 3389 port to Onprem cidr range for connecting to servers from VDA/VDZ"
+    vpc_id      = data.aws_vpc.current.id
+    ingress     = local.onprem_win_access_ingress
+    egress      = {}
+  }
+}
+
+module "outbound_access_sg_v2" {
+  count   = contains(local.requested_security_groups, "outbound_access") ? 1 : 0
+  source  = "app.terraform.io/NYL-Prod/apps-resources/aws//modules/terraform-aws-security-group"
+  version = "1.2.0"
+  tf_org  = "NYL-PROD"
+  appid   = var.appid
+  tags    = var.tags
+
+  security_group = {
+    name        = "clientprosvs-outbound-access-sg"
+    description = "This has only Oubtbound Rule on all traffic"
+    vpc_id      = data.aws_vpc.current.id
+    ingress     = local.outbound_access_ingress
+
+    egress = {
+      all-outbound = {
+        description = "All outbound"
+        ip_protocol = "-1"
+        cidr_ipv4   = "0.0.0.0/0"
+      }
+    }
+  }
+}
+
+module "cyberark_instance_access_sg_v2" {
+  source  = "app.terraform.io/NYL-Prod/apps-resources/aws//modules/terraform-aws-security-group"
+  version = "1.2.0"
+  tf_org  = "NYL-PROD"
+  appid   = var.appid
+  tags    = var.tags
+
+  security_group = {
+    name        = "clientprosvs-cyberark-instance-access-sg"
+    description = "Cyberark SG to allow few ports for cyberark access"
+    vpc_id      = data.aws_vpc.current.id
+    ingress     = local.cyberark_ingress
+    egress      = {}
+  }
+}
+
+module "hearsay_instance_access_sg_v2" {
+  source  = "app.terraform.io/NYL-Prod/apps-resources/aws//modules/terraform-aws-security-group"
+  version = "1.2.0"
+  tf_org  = "NYL-PROD"
+  appid   = var.appid
+  tags    = var.tags
+
+  security_group = {
+    name        = "clientprosvs-hearsay-instance-access-sg"
+    description = "SG for hearsay application"
+    vpc_id      = data.aws_vpc.current.id
+    ingress     = local.hearsay_ingress
+    egress      = {}
+  }
+}
