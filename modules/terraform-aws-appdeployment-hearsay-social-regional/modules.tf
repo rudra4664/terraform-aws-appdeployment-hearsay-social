@@ -138,7 +138,7 @@ module "vpc_access_sg_v2" {
   tags    = var.tags
 
   security_group = {
-    name        = "clientprosvs-vpc-access-sg"
+    name        = "clientprosvs-vpc-access-sg-green"
     description = "Allows access between resources within VPC CIDR"
     vpc_id      = data.aws_vpc.current.id
     ingress     = local.vpc_access_ingress
@@ -202,7 +202,7 @@ module "cyberark_instance_access_sg_v2" {
   tags    = var.tags
 
   security_group = {
-    name        = "clientprosvs-cyberark-instance-access-sg"
+    name        = "clientprosvs-cyberark-instance-access-sg-green"
     description = "Cyberark SG to allow few ports for cyberark access"
     vpc_id      = data.aws_vpc.current.id
     ingress     = local.cyberark_ingress
