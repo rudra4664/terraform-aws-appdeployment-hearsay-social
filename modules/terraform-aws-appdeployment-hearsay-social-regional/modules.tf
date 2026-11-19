@@ -29,8 +29,13 @@ module "green_instances" {
   }
 
   network = {
-    security_group_ids = toset([for sg in each.value.security_groups : local.security_group_ids[sg]])
-    subnet_id          = local.subnet_ids_by_az[each.value.availability_zone]
+    security_group_ids = toset(flatten([
+      for sg in each.value.security_groups : [
+        local.security_group_ids[sg],
+        local.replacement_security_group_ids[sg],
+      ]
+    ]))
+    subnet_id = local.subnet_ids_by_az[each.value.availability_zone]
   }
 }
 
