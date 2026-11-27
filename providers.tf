@@ -30,6 +30,7 @@ provider "aws" {
     ]
 
     key_prefixes = [
+      "nyl:platform:",
       "nyl:platform:temp",
     ]
   }
