@@ -4,12 +4,59 @@ locals {
 
   requested_security_groups = toset(flatten([for instance in values(var.green_instances) : instance.security_groups]))
 
+  current_security_groups = {
+    for key, group in local.security_groups : key => group
+    if !contains(["onprem_win_access", "outbound_access"], key) || contains(local.requested_security_groups, key)
+  }
+
   security_group_ids = {
-    cyberark_instance_access = module.cyberark_instance_access_sg_v2.resources.aws_security_group.id
-    hearsay_instance_access  = module.hearsay_instance_access_sg_v2.resources.aws_security_group.id
-    onprem_win_access        = one(module.onprem_win_access_sg_v2[*].resources.aws_security_group.id)
-    outbound_access          = one(module.outbound_access_sg_v2[*].resources.aws_security_group.id)
-    vpc_access               = module.vpc_access_sg_v2.resources.aws_security_group.id
+    for key, group in module.security_groups : key => group.resources.aws_security_group.id
+  }
+
+  security_groups = {
+    cyberark_instance_access = {
+      description = "Cyberark SG to allow few ports for cyberark access"
+      ingress     = local.cyberark_ingress
+      egress      = {}
+    }
+
+    hearsay_instance_access = {
+      description = "SG for hearsay application"
+      ingress     = local.hearsay_ingress
+      egress      = {}
+    }
+
+    onprem_win_access = {
+      description = "Allow 3389 port to Onprem cidr range for connecting to servers from VDA/VDZ"
+      ingress     = local.onprem_win_access_ingress
+      egress      = {}
+    }
+
+    outbound_access = {
+      description = "This has only Oubtbound Rule on all traffic"
+      ingress     = local.outbound_access_ingress
+
+      egress = {
+        all-outbound = {
+          description = "All outbound"
+          ip_protocol = "-1"
+          cidr_ipv4   = "0.0.0.0/0"
+        }
+      }
+    }
+
+    vpc_access = {
+      description = "Allows access between resources within VPC CIDR"
+      ingress     = local.vpc_access_ingress
+
+      egress = {
+        all-outbound = {
+          description = "All outbound"
+          ip_protocol = "-1"
+          cidr_ipv4   = "0.0.0.0/0"
+        }
+      }
+    }
   }
 
   cyberark_cidrs = [

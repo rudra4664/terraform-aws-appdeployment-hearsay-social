@@ -34,98 +34,19 @@ module "green_instances" {
   }
 }
 
-module "vpc_access_sg_v2" {
-  source  = "app.terraform.io/NYL-Prod/apps-resources/aws//modules/terraform-aws-security-group"
-  version = "1.2.0"
-  tf_org  = "NYL-PROD"
-  appid   = var.appid
-  tags    = var.tags
+module "security_groups" {
+  for_each = local.current_security_groups
+  source   = "app.terraform.io/NYL-Prod/apps-resources/aws//modules/terraform-aws-security-group"
+  version  = "1.2.0"
+  tf_org   = "NYL-PROD"
+  appid    = var.appid
+  tags     = var.tags
 
   security_group = {
-    name        = var.security_group_names[var.env]["vpc_access"]
-    description = "Allows access between resources within VPC CIDR"
+    name        = var.security_group_names[var.env][each.key]
+    description = each.value.description
     vpc_id      = data.aws_vpc.current.id
-    ingress     = local.vpc_access_ingress
-
-    egress = {
-      all-outbound = {
-        description = "All outbound"
-        ip_protocol = "-1"
-        cidr_ipv4   = "0.0.0.0/0"
-      }
-    }
-  }
-}
-
-module "onprem_win_access_sg_v2" {
-  count   = contains(local.requested_security_groups, "onprem_win_access") ? 1 : 0
-  source  = "app.terraform.io/NYL-Prod/apps-resources/aws//modules/terraform-aws-security-group"
-  version = "1.2.0"
-  tf_org  = "NYL-PROD"
-  appid   = var.appid
-  tags    = var.tags
-
-  security_group = {
-    name        = var.security_group_names[var.env]["onprem_win_access"]
-    description = "Allow 3389 port to Onprem cidr range for connecting to servers from VDA/VDZ"
-    vpc_id      = data.aws_vpc.current.id
-    ingress     = local.onprem_win_access_ingress
-    egress      = {}
-  }
-}
-
-module "outbound_access_sg_v2" {
-  count   = contains(local.requested_security_groups, "outbound_access") ? 1 : 0
-  source  = "app.terraform.io/NYL-Prod/apps-resources/aws//modules/terraform-aws-security-group"
-  version = "1.2.0"
-  tf_org  = "NYL-PROD"
-  appid   = var.appid
-  tags    = var.tags
-
-  security_group = {
-    name        = var.security_group_names[var.env]["outbound_access"]
-    description = "This has only Oubtbound Rule on all traffic"
-    vpc_id      = data.aws_vpc.current.id
-    ingress     = local.outbound_access_ingress
-
-    egress = {
-      all-outbound = {
-        description = "All outbound"
-        ip_protocol = "-1"
-        cidr_ipv4   = "0.0.0.0/0"
-      }
-    }
-  }
-}
-
-module "cyberark_instance_access_sg_v2" {
-  source  = "app.terraform.io/NYL-Prod/apps-resources/aws//modules/terraform-aws-security-group"
-  version = "1.2.0"
-  tf_org  = "NYL-PROD"
-  appid   = var.appid
-  tags    = var.tags
-
-  security_group = {
-    name        = var.security_group_names[var.env]["cyberark_instance_access"]
-    description = "Cyberark SG to allow few ports for cyberark access"
-    vpc_id      = data.aws_vpc.current.id
-    ingress     = local.cyberark_ingress
-    egress      = {}
-  }
-}
-
-module "hearsay_instance_access_sg_v2" {
-  source  = "app.terraform.io/NYL-Prod/apps-resources/aws//modules/terraform-aws-security-group"
-  version = "1.2.0"
-  tf_org  = "NYL-PROD"
-  appid   = var.appid
-  tags    = var.tags
-
-  security_group = {
-    name        = var.security_group_names[var.env]["hearsay_instance_access"]
-    description = "SG for hearsay application"
-    vpc_id      = data.aws_vpc.current.id
-    ingress     = local.hearsay_ingress
-    egress      = {}
+    ingress     = each.value.ingress
+    egress      = each.value.egress
   }
 }
