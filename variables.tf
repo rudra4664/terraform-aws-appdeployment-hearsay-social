@@ -262,3 +262,34 @@ variable "vpc_access_https_cidrs" {
     prod = []
   }
 }
+
+variable "security_group_names" {
+  description = "Security group names by environment and security group key."
+  type        = map(map(string))
+
+  default = {
+    dev = {
+      cyberark_instance_access = "clientprosvs-cyberark-instance-access-sg-green"
+      hearsay_instance_access  = "clientprosvs-hearsay-instance-access-sg"
+      onprem_win_access        = "clientprosvs-onprem-win-access-sg"
+      outbound_access          = "clientprosvs-outbound-access-sg-green"
+      vpc_access               = "clientprosvs-vpc-access-sg-green"
+    }
+
+    qa = {
+      cyberark_instance_access = "clientprosvs-cyberark-instance-access-sg-green"
+      hearsay_instance_access  = "clientprosvs-hearsay-instance-access-sg"
+      onprem_win_access        = "clientprosvs-onprem-win-access-sg"
+      outbound_access          = "clientprosvs-outbound-access-sg-green"
+      vpc_access               = "clientprosvs-vpc-access-sg-green"
+    }
+
+    prod = {
+      cyberark_instance_access = "clientprosvs-cyberark-instance-access-sg-green"
+      hearsay_instance_access  = "clientprosvs-hearsay-instance-access-sg"
+      onprem_win_access        = "clientprosvs-onprem-win-access-sg"
+      outbound_access          = "clientprosvs-outbound-access-sg-green"
+      vpc_access               = "clientprosvs-vpc-access-sg-green"
+    }
+  }
+}

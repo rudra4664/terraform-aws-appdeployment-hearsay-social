@@ -42,7 +42,7 @@ module "vpc_access_sg_v2" {
   tags    = var.tags
 
   security_group = {
-    name        = "clientprosvs-vpc-access-sg-green"
+    name        = var.security_group_names[var.env]["vpc_access"]
     description = "Allows access between resources within VPC CIDR"
     vpc_id      = data.aws_vpc.current.id
     ingress     = local.vpc_access_ingress
@@ -66,7 +66,7 @@ module "onprem_win_access_sg_v2" {
   tags    = var.tags
 
   security_group = {
-    name        = "clientprosvs-onprem-win-access-sg"
+    name        = var.security_group_names[var.env]["onprem_win_access"]
     description = "Allow 3389 port to Onprem cidr range for connecting to servers from VDA/VDZ"
     vpc_id      = data.aws_vpc.current.id
     ingress     = local.onprem_win_access_ingress
@@ -83,7 +83,7 @@ module "outbound_access_sg_v2" {
   tags    = var.tags
 
   security_group = {
-    name        = "clientprosvs-outbound-access-sg-green"
+    name        = var.security_group_names[var.env]["outbound_access"]
     description = "This has only Oubtbound Rule on all traffic"
     vpc_id      = data.aws_vpc.current.id
     ingress     = local.outbound_access_ingress
@@ -106,7 +106,7 @@ module "cyberark_instance_access_sg_v2" {
   tags    = var.tags
 
   security_group = {
-    name        = "clientprosvs-cyberark-instance-access-sg-green"
+    name        = var.security_group_names[var.env]["cyberark_instance_access"]
     description = "Cyberark SG to allow few ports for cyberark access"
     vpc_id      = data.aws_vpc.current.id
     ingress     = local.cyberark_ingress
@@ -122,7 +122,7 @@ module "hearsay_instance_access_sg_v2" {
   tags    = var.tags
 
   security_group = {
-    name        = "clientprosvs-hearsay-instance-access-sg"
+    name        = var.security_group_names[var.env]["hearsay_instance_access"]
     description = "SG for hearsay application"
     vpc_id      = data.aws_vpc.current.id
     ingress     = local.hearsay_ingress

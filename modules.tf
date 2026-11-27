@@ -19,6 +19,7 @@ module "regional_us_east_1" {
   hearsay_winrm_tls_cidrs = var.hearsay_winrm_tls_cidrs[var.env]
   instance_profile_name   = module.global.instance_profile_name
   lob                     = var.lob
+  security_group_names    = var.security_group_names
   tags                    = var.tags
   vpc_access_https_cidrs  = var.vpc_access_https_cidrs[var.env]
 

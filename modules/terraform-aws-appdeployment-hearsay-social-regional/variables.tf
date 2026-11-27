@@ -69,3 +69,8 @@ variable "vpc_access_https_cidrs" {
   description = "CIDRs for the vpc access https rules, for the current environment."
   type        = set(string)
 }
+
+variable "security_group_names" {
+  description = "Security group names by environment and security group key."
+  type        = map(map(string))
+}
